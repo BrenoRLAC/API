@@ -3,8 +3,8 @@ using API.Service;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
-namespace API.Controllers
-{
+namespace API.Controllers;
+
     [ApiController]
     [Route("[controller]")]
     public class API : Controller
@@ -16,22 +16,28 @@ namespace API.Controllers
            
         }
 
+        [HttpGet]
+        public async Task<ActionResult<List<HeroModel>>> GetAllHeroes()
+        {
+            var result = await _heroService.ListHero();
+            return Ok(result);
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult> GetHero(int id)
         {
            
-            await _heroService.ListHero(id);
-            return Ok();
+            var result = await _heroService.ListHeroById(id);
+            return Ok(result);
 
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<IHeroService>> AddHero(IHeroService hero)
+        public async Task<ActionResult<HeroModel>> AddHero(HeroModel hero)
         {
-            await _heroService.AddHeroes(hero);
-            return Ok(hero);
+           var result = await _heroService.AddHeroes(hero);
+            return Ok(result);
         }
-
     }
-}
+

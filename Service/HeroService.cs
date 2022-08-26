@@ -1,5 +1,7 @@
 ﻿using API.Interface;
+using API.Model;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service
 {
@@ -11,15 +13,19 @@ namespace API.Service
         {
             _dao = dao;
         }
-
+        public Task<List<HeroModel>> ListHero()
+        {
+            return _dao.ListHero();
+        }
+        public Task<HeroModel> ListHeroById(int id)
+        {
+            return _dao.ListHeroById(id);
+        }
         public async Task<List<HeroService>> AddHeroes(IHeroService hero)
         {
             throw new NotImplementedException();
         }
 
-        public Task<HeroService> ListHero(int id)
-        {
-            return _dao.Services(id);
-        }
+       
     }
 }
