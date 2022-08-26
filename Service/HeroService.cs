@@ -23,7 +23,7 @@ namespace API.Service
         }
         public async Task<List<HeroService>> AddHeroes(IHeroService hero)
         {
-            throw new NotImplementedException();
+            return _dao.AddHeroes(hero);
         }
 
        
