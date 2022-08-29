@@ -1,5 +1,6 @@
 
 using API.Interface;
+using API.Middleware;
 using API.Service;
 using API.Util;
 using Microsoft.Data.SqlClient;
@@ -30,6 +31,8 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware();
 
 app.MapControllers();
 
