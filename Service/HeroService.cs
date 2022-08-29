@@ -21,7 +21,7 @@ namespace API.Service
         {
             return _dao.ListHeroById(id);
         }
-          public Task<List<HeroModel>>AddHeroes(HeroModel hero)
+          public Task AddHeroes(HeroModel hero)
         {
             return _dao.AddHeroes(hero);
         }

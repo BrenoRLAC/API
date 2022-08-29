@@ -34,10 +34,10 @@ namespace API.Controllers;
         }
 
         [HttpPost]
-        public async Task<ActionResult<HeroModel>> AddHero(HeroModel hero)
+        public async Task<IActionResult> AddHero(HeroModel hero)
         {
-           var result = await _heroService.AddHeroes(hero);
-            return Ok(result);
+            await _heroService.AddHeroes(hero);
+            return Ok();
         }
     }
 

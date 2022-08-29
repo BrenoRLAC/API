@@ -10,6 +10,6 @@ namespace API.Interface
         Task<List<HeroModel>> ListHero();
         Task<HeroModel> ListHeroById(int id);
 
-        Task<List<HeroModel>> AddHeroes(HeroModel hero);
+        Task AddHeroes(HeroModel hero);
     }
 }

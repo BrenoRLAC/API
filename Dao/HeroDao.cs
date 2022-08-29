@@ -27,16 +27,26 @@ public class HeroDao : IHeroDao
         return (List<HeroModel>)hero.Item1;
 
     }
-    public async Task<HeroModel> ListHeroById(int id)
+    public async Task<HeroModel> ListHeroById(int id) 
     {
-        var hero = await connection.QueryFirstAsync<HeroModel>("ListHeroById",
-            new { Id = id });
-        return hero;
+            var hero = await connection.QueryFirstAsync<HeroModel>("ListHeroById",
+            new
+            {
+                Id = id
+            }, commandType: CommandType.StoredProcedure);
+            return hero;                 
     }
 
-    public Task<List<HeroModel>> AddHeroes(HeroModel hero)
+    public async Task AddHeroes(HeroModel hero)
     {
-        throw new NotImplementedException();
+        var connectionBd = "insertHero";
+        var newHero = new DynamicParameters();
+        newHero.Add("name", hero.Name);
+        newHero.Add("FirstName", hero.FirstName);
+        newHero.Add("LastName", hero.LastName);
+        newHero.Add("Place", hero.Place);
+        await connection.ExecuteAsync(connectionBd, newHero, commandType: CommandType.StoredProcedure);
+
     }
 }
 
