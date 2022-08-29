@@ -12,9 +12,9 @@ namespace API.Util;
 public class HeroDao : IHeroDao
 {
     private readonly string _connectStr;
-    private NpgsqlConnection _connection;
+    private SqlConnection _connection;
 
-    private NpgsqlConnection connection => _connection ??= new NpgsqlConnection(_connectStr);
+    private SqlConnection connection => _connection ??= new SqlConnection(_connectStr);
 
     public HeroDao(IConfiguration config)
     {
@@ -22,19 +22,19 @@ public class HeroDao : IHeroDao
     }
     public async Task<List<HeroModel>> ListHero() 
     {
-        var hero = (await connection.QueryAsync<HeroModel>("StoredProcedureName"),
+        var hero = (await connection.QueryAsync<HeroModel>("listAllHeroes"),
                    commandType: CommandType.StoredProcedure);
         return (List<HeroModel>)hero.Item1;
 
     }
     public async Task<HeroModel> ListHeroById(int id)
     {
-        var hero = await connection.QueryFirstAsync<HeroModel>("Select * from api.hero a where id = @Id",
+        var hero = await connection.QueryFirstAsync<HeroModel>("ListHeroById",
             new { Id = id });
         return hero;
     }
 
-    public List<HeroService> AddHeroes(HeroModel hero)
+    public Task<List<HeroModel>> AddHeroes(HeroModel hero)
     {
         throw new NotImplementedException();
     }

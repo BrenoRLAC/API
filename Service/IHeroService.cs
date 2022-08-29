@@ -8,7 +8,7 @@ namespace API.Service
     {
         Task<List<HeroModel>> ListHero();
         Task <HeroModel> ListHeroById(int id);
-        Task AddHeroes(HeroModel hero);
+        Task <List<HeroModel>> AddHeroes(HeroModel hero);
 
     }
 }
