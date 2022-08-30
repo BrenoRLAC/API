@@ -1,11 +1,9 @@
 ﻿
 using System.Net;
-
-using Newtonsoft.Json;
+using System.Text.Json;
 
 namespace API.Middleware
 {
-    // You may need to install the Microsoft.AspNetCore.Http.Abstractions package into your project
     public class Middleware
     {
         private readonly RequestDelegate _next;
@@ -29,21 +27,20 @@ namespace API.Middleware
 
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
-            var code = HttpStatusCode.InternalServerError; // 500 if unexpected
+            var code = HttpStatusCode.InternalServerError;
 
-            if (exception is Exception) code = HttpStatusCode.NotFound;
-            // else if (exception is MyUnauthorizedException) code = HttpStatusCode.Unauthorized;
-            // else if (exception is MyException)             code = HttpStatusCode.BadRequest;
+            if (exception is ArgumentException) code = HttpStatusCode.BadRequest;
+            if (exception is KeyNotFoundException) code = HttpStatusCode.NotFound;
 
-            var result = JsonConvert.SerializeObject(new { error = exception.Message });
-           
+
+            var result = JsonSerializer.Serialize(new { error = "An error occured while processing your request." });
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);
         }
     }
 
-    // Extension method used to add the middleware to the HTTP request pipeline.
+
     public static class MiddlewareExtensions
     {
         public static IApplicationBuilder UseMiddleware(this IApplicationBuilder builder)

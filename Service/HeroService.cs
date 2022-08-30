@@ -7,7 +7,7 @@ namespace API.Service
 {
     public class HeroService : IHeroService
     {
-        private readonly IHeroDao _dao; 
+        private readonly IHeroDao _dao;
 
         public HeroService(IHeroDao dao)
         {
@@ -21,9 +21,14 @@ namespace API.Service
         {
             return _dao.ListHeroById(id);
         }
-          public Task AddHeroes(HeroModel hero)
+        public Task AddHeroes(HeroModel hero)
         {
             return _dao.AddHeroes(hero);
+        }
+
+        public Task UpdateHeroes(HeroModel hero)
+        {
+            return _dao.UpdateHeroes(hero);
         }
     }
 }

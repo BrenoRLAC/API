@@ -9,7 +9,7 @@ namespace API.Interface
     {
         Task<List<HeroModel>> ListHero();
         Task<HeroModel> ListHeroById(int id);
-
         Task AddHeroes(HeroModel hero);
+        Task UpdateHeroes(HeroModel hero);
     }
 }
