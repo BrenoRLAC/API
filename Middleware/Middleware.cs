@@ -28,12 +28,18 @@ namespace API.Middleware
         private Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             var code = HttpStatusCode.InternalServerError;
+            var result = JsonSerializer.Serialize(new { error = "Um erro ocorreu enquanto processavamos a requisição." });
 
             if (exception is ArgumentException) code = HttpStatusCode.BadRequest;
             if (exception is KeyNotFoundException) code = HttpStatusCode.NotFound;
-
-
-            var result = JsonSerializer.Serialize(new { error = "An error occured while processing your request." });
+            
+            if (exception is InvalidOperationException)
+            {
+                code = HttpStatusCode.BadRequest;
+                result = JsonSerializer.Serialize(new { error = "Herói inativo ou inexistente, verifique o id informado." });
+            }
+            
+          
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)code;
             return context.Response.WriteAsync(result);

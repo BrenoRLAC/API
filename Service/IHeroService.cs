@@ -9,8 +9,8 @@ namespace API.Service
         Task<List<HeroModel>> ListHero();
         Task<HeroModel> ListHeroById(int id);
         Task AddHero(HeroModel hero);
-        Task <HeroModel> UpdateHero(HeroModel hero);
-        Task DeleteHero(int id);
+        Task<HeroModel> UpdateHero(HeroModel hero);
+        Task<HeroModel> DeleteHero(int id);
 
     }
 }

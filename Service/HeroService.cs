@@ -33,9 +33,11 @@ namespace API.Service
            
          return validateHero;
         }
-        public Task DeleteHero(int id)
+        public async Task<HeroModel> DeleteHero(int id)
         {
-            return _dao.DeleteHero(id);
+            var validateHero = await _dao.ListHeroById(id); 
+                await _dao.DeleteHero(id);
+            return validateHero;
         }
     }
 }
