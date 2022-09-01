@@ -21,14 +21,21 @@ namespace API.Service
         {
             return _dao.ListHeroById(id);
         }
-        public Task AddHeroes(HeroModel hero)
+        public Task AddHero(HeroModel hero)
         {
-            return _dao.AddHeroes(hero);
+            return _dao.AddHero(hero);
         }
 
-        public Task UpdateHeroes(HeroModel hero)
+        public async Task<HeroModel> UpdateHero(HeroModel hero)
         {
-            return _dao.UpdateHeroes(hero);
+            var validateHero = await _dao.ListHeroById(hero.Id);         
+                 await _dao.UpdateHero(hero);
+           
+         return validateHero;
+        }
+        public Task DeleteHero(int id)
+        {
+            return _dao.DeleteHero(id);
         }
     }
 }

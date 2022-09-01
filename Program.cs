@@ -3,9 +3,7 @@ using API.Interface;
 using API.Middleware;
 using API.Service;
 using API.Util;
-using Microsoft.Data.SqlClient;
-using Npgsql;
-using System.Data;
+
 
 var builder = WebApplication.CreateBuilder(args);
 

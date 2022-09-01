@@ -38,7 +38,7 @@ public class HeroDao : IHeroDao
         return hero;
     }
 
-    public async Task AddHeroes(HeroModel hero)
+    public async Task AddHero(HeroModel hero)
     {
         var connectionBd = "insertHero";
         var newHero = new DynamicParameters();
@@ -50,7 +50,7 @@ public class HeroDao : IHeroDao
 
     }
 
-    public async Task UpdateHeroes(HeroModel hero)
+    public async Task UpdateHero(HeroModel hero)
     {
         await connection.ExecuteAsync("updateHero", new
         {
@@ -60,10 +60,18 @@ public class HeroDao : IHeroDao
             hero.LastName,
             hero.Place
 
+
         }, commandType: CommandType.StoredProcedure);
+    }
 
+    public async Task DeleteHero(int id)
+    {
+       
+        await connection.ExecuteAsync("deleteHero", new
+        {
+             id
 
-
+        }, commandType: CommandType.StoredProcedure);
     }
 }
 

@@ -36,7 +36,7 @@ public class API : Controller
     [HttpPost]
     public async Task<IActionResult> AddHero(HeroModel hero)
     {
-        await _heroService.AddHeroes(hero);
+        await _heroService.AddHero(hero);
         return Ok();
     }
 
@@ -44,14 +44,15 @@ public class API : Controller
     public async Task<IActionResult> UpdateHero([FromRoute] int id, HeroModel hero)
     {
         hero.Id = id;
-        await _heroService.UpdateHeroes(hero);
+        await _heroService.UpdateHero(hero);
         return Ok();
     }
 
-    [HttpDelete]
-    public async Task<IActionResult> DeleteHero()
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteHero([FromRoute] int id)
     {
-        throw new NotImplementedException();
+        await _heroService.DeleteHero(id);
+        return Ok();
     }
 
 }
