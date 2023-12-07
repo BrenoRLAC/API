@@ -1,9 +1,7 @@
 ﻿using API.Model;
-using API.Service;
-using Microsoft.AspNetCore.Mvc;
-using Npgsql;
 
-namespace API.Interface
+
+namespace API.Infrastructure.Interface
 {
     public interface IHeroDao
     {

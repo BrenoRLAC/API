@@ -1,14 +1,10 @@
-﻿using API.Interface;
-using API.Service;
-using Dapper;
-using Npgsql;
+﻿using Dapper;
 using API.Model;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 using System.Data;
-using System.Threading;
+using API.Infrastructure.Interface;
 
-namespace API.Util;
+namespace API.Infrastructure.Dao;
 
 public class HeroDao : IHeroDao
 {
@@ -66,10 +62,10 @@ public class HeroDao : IHeroDao
 
     public async Task DeleteHero(int id)
     {
-       
+
         await connection.ExecuteAsync("deleteHero", new
         {
-             id
+            id
 
         }, commandType: CommandType.StoredProcedure);
     }

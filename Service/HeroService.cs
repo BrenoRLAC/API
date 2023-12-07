@@ -1,7 +1,5 @@
-﻿using API.Interface;
+﻿using API.Infrastructure.Interface;
 using API.Model;
-using Microsoft.AspNetCore.Diagnostics;
-using Microsoft.AspNetCore.Mvc;
 
 namespace API.Service
 {
