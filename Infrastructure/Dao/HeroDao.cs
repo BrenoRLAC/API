@@ -21,7 +21,7 @@ public class HeroDao : IHeroDao
     {
         var hero = (await connection.QueryAsync<HeroModel>("listAllHeroes"),
                    commandType: CommandType.StoredProcedure);
-        return (List<HeroModel>)hero.Item1;
+        return (List<HeroModel>)hero.Item1.AsList();
 
     }
     public async Task<HeroModel> ListHeroById(int id)

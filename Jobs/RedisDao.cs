@@ -20,11 +20,9 @@ namespace API.Jobs
 
         public async Task setAsync(string key, string value)
         {
-
-            TimeSpan? expiry = TimeSpan.FromHours(1);
-
+           
             _logger.LogInformation("[REDIS] SetAsync {key}", key);
-            await Database.StringSetAsync(key, value, expiry);
+            await Database.StringSetAsync(key, value);
         }
     }
 }

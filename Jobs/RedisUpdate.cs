@@ -24,7 +24,6 @@ namespace API.Jobs
         }
 
 
-
         public async Task Run(PerformContext context)
         {
             var heroes = await _heroDao.ListHero();                           
