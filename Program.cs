@@ -4,7 +4,9 @@ using API.Jobs;
 using API.Middleware;
 using API.Service;
 using Hangfire;
+using RabbitMQ.Client;
 using StackExchange.Redis;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,6 +23,28 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddHangfireServer();
 
+ConnectionFactory factory = new();
+
+factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
+factory.ClientProvidedName = "Rabbit Sender";
+
+IConnection cnn = factory.CreateConnection();
+IModel channel = cnn.CreateModel();
+
+string exchangeName = "ExchangeQueue";
+string routingKey = "routing-key";
+string queue = "Queue";
+
+
+channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+channel.QueueDeclare(queue, false, false, false, null);
+channel.QueueBind(queue, exchangeName, routingKey, null);
+
+byte[] messageBodyBytes = Encoding.UTF8.GetBytes("Hello World");
+channel.BasicPublish(exchangeName, routingKey, null, messageBodyBytes);
+
+channel.Close();
+cnn.Close();
 
 builder.Services.AddSingleton<ConnectionMultiplexer>(provider =>
 {
