@@ -1,7 +1,7 @@
 ﻿using API.Infrastructure.Interface;
 using StackExchange.Redis;
 
-namespace API.Jobs
+namespace API.Infrastructure.Dao
 {
     public class RedisDao : IRedisDao
     {
@@ -14,13 +14,13 @@ namespace API.Jobs
 
         public RedisDao(ConnectionMultiplexer connection, ILogger<RedisDao> logger)
         {
-                _connection = connection;
-                _logger = logger;
+            _connection = connection;
+            _logger = logger;
         }
 
         public async Task setAsync(string key, string value)
         {
-           
+
             _logger.LogInformation("[REDIS] SetAsync {key}", key);
             await Database.StringSetAsync(key, value);
         }

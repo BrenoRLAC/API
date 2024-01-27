@@ -1,5 +1,5 @@
-﻿using API.Infrastructure.Interface;
-using API.Model;
+﻿using API.Domain.Hero;
+using API.Infrastructure.Interface;
 
 namespace API.Service
 {
@@ -11,27 +11,27 @@ namespace API.Service
         {
             _dao = dao;
         }
-        public Task<List<HeroModel>> ListHero()
+        public Task<List<Hero>> ListHero()
         {
             return _dao.ListHero();
         }
-        public Task<HeroModel> ListHeroById(int id)
+        public Task<Hero> ListHeroById(int id)
         {
             return _dao.ListHeroById(id);
         }
-        public Task AddHero(HeroModel hero)
+        public Task AddHero(Hero hero)
         {
             return _dao.AddHero(hero);
         }
 
-        public async Task<HeroModel> UpdateHero(HeroModel hero)
+        public async Task<Hero> UpdateHero(Hero hero)
         {
             var validateHero = await _dao.ListHeroById(hero.Id);         
                  await _dao.UpdateHero(hero);
            
          return validateHero;
         }
-        public async Task<HeroModel> DeleteHero(int id)
+        public async Task<Hero> DeleteHero(int id)
         {
             var validateHero = await _dao.ListHeroById(id); 
                 await _dao.DeleteHero(id);

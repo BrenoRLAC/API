@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
-namespace API.Model
+namespace API.Domain.Hero
 {
-    public class HeroModel
+    public class Hero
     {
         [JsonIgnore]
         public int Id { get; set; }
@@ -11,19 +11,15 @@ namespace API.Model
         [JsonPropertyName("Name")]
         [Required(ErrorMessage = "Campo nome é obrigatório!")]
         public string Name { get; set; }
-        
-        [JsonPropertyName("FirstName")]
-        [Required(ErrorMessage = "Campo Primeiro Nome é obrigatório!")]
-        public string FirstName { get; set; }
 
-        [JsonPropertyName("LastName")]
-        [Required(ErrorMessage = "Campo Ultimo Nome é obrigatório!")]
-        public string LastName { get; set; }
-        
+        [JsonPropertyName("DisguiseName")]
+        [Required(ErrorMessage = "Campo Nome do disfarce é obrigatório!")]
+        public string DisguiseName { get; set; }
+
         [JsonPropertyName("Place")]
         [Required(ErrorMessage = "Campo Lugar é obrigatório!")]
         public string Place { get; set; }
-        
+
         [JsonIgnore]
         [JsonPropertyName("Active")]
         public bool Active { get; set; }

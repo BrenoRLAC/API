@@ -1,13 +1,12 @@
-﻿using API.Model;
+﻿using API.Domain.Hero;
 using API.Service;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 
 namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class API : Controller
+public class API : ControllerBase
 {
     private readonly IHeroService _heroService;
     public API(IHeroService heroService)
@@ -17,7 +16,7 @@ public class API : Controller
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<HeroModel>>> GetAllHeroes()
+    public async Task<ActionResult<List<Hero>>> GetAllHeroes()
     {
         var result = await _heroService.ListHero();
         return Ok(result);
@@ -34,14 +33,14 @@ public class API : Controller
     }
 
     [HttpPost]
-    public async Task<IActionResult> AddHero(HeroModel hero)
+    public async Task<IActionResult> AddHero(Hero hero)
     {
         await _heroService.AddHero(hero);
         return Ok();
     }
 
     [HttpPut("{id}")]
-    public async Task<IActionResult> UpdateHero([FromRoute] int id, HeroModel hero)
+    public async Task<IActionResult> UpdateHero([FromRoute] int id, Hero hero)
     {
         hero.Id = id;
         await _heroService.UpdateHero(hero);

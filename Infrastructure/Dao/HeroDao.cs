@@ -1,8 +1,8 @@
 ﻿using Dapper;
-using API.Model;
 using Microsoft.Data.SqlClient;
 using System.Data;
 using API.Infrastructure.Interface;
+using API.Domain.Hero;
 
 namespace API.Infrastructure.Dao;
 
@@ -17,16 +17,16 @@ public class HeroDao : IHeroDao
     {
         _connectStr = config.GetConnectionString("Default");
     }
-    public async Task<List<HeroModel>> ListHero()
+    public async Task<List<Hero>> ListHero()
     {
-        var hero = (await connection.QueryAsync<HeroModel>("listAllHeroes"),
+        var hero = (await connection.QueryAsync<Hero>("listAllHeroes"),
                    commandType: CommandType.StoredProcedure);
-        return (List<HeroModel>)hero.Item1.AsList();
+        return (List<Hero>)hero.Item1.AsList();
 
     }
-    public async Task<HeroModel> ListHeroById(int id)
+    public async Task<Hero> ListHeroById(int id)
     {
-        var hero = await connection.QueryFirstAsync<HeroModel>("ListHeroById",
+        var hero = await connection.QueryFirstAsync<Hero>("ListHeroById",
         new
         {
             Id = id
@@ -34,26 +34,24 @@ public class HeroDao : IHeroDao
         return hero;
     }
 
-    public async Task AddHero(HeroModel hero)
+    public async Task AddHero(Hero hero)
     {
         var connectionBd = "insertHero";
         var newHero = new DynamicParameters();
         newHero.Add("name", hero.Name);
-        newHero.Add("FirstName", hero.FirstName);
-        newHero.Add("LastName", hero.LastName);
+        newHero.Add("DisguiseName", hero.DisguiseName);        
         newHero.Add("Place", hero.Place);
         await connection.ExecuteAsync(connectionBd, newHero, commandType: CommandType.StoredProcedure);
 
     }
 
-    public async Task UpdateHero(HeroModel hero)
+    public async Task UpdateHero(Hero hero)
     {
         await connection.ExecuteAsync("updateHero", new
         {
             hero.Id,
-            hero.Name,
-            hero.FirstName,
-            hero.LastName,
+            hero.Name,           
+            hero.DisguiseName,
             hero.Place
 
 

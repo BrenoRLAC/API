@@ -1,50 +1,69 @@
+using API.Domain.Notification;
+using API.Infrastructure;
 using API.Infrastructure.Dao;
 using API.Infrastructure.Interface;
 using API.Jobs;
 using API.Middleware;
 using API.Service;
+using API.Utilities;
 using Hangfire;
 using RabbitMQ.Client;
 using StackExchange.Redis;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+
+var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.WithOrigins(allowedOrigins)
+               .AllowAnyHeader()
+               .AllowAnyMethod()                        
+               .AllowCredentials();
+    });
+});
+
+
 builder.Services.AddTransient<IHeroDao, HeroDao>();
 builder.Services.AddTransient<IHeroService, HeroService>();
 builder.Services.AddTransient<IRedisUpdate, RedisUpdate>();
 builder.Services.AddTransient<IRedisDao, RedisDao>();
-
+builder.Services.AddTransient<INotificationHub, NotificationHub>();
+builder.Services.AddSignalR();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
+
+
 builder.Services.AddHangfire(x => x.UseSqlServerStorage(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddHangfireServer();
 
-ConnectionFactory factory = new();
+var config = new ConfigurationBuilder()
+    .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+    .Build();
 
-factory.Uri = new Uri("amqp://guest:guest@localhost:5672");
-factory.ClientProvidedName = "Rabbit Sender";
-
-IConnection cnn = factory.CreateConnection();
-IModel channel = cnn.CreateModel();
-
-string exchangeName = "ExchangeQueue";
-string routingKey = "routing-key";
-string queue = "Queue";
+var rabbitFactory = new ConnectionFactory
+{
+    HostName = config["RabbitMQ:host"],
+    Port = int.Parse(config["RabbitMQ:port"]),
+    UserName = config["RabbitMQ:user"],
+    Password = config["RabbitMQ:password"]
+};
 
 
-channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
-channel.QueueDeclare(queue, false, false, false, null);
-channel.QueueBind(queue, exchangeName, routingKey, null);
+var rabbitClient = new RabbitClient(rabbitFactory);
 
-byte[] messageBodyBytes = Encoding.UTF8.GetBytes("Hello World");
-channel.BasicPublish(exchangeName, routingKey, null, messageBodyBytes);
+builder.Services.AddSingleton<IRabbitClient>(rabbitClient);
+builder.Services.AddHostedService<RabbitListener>();
 
-channel.Close();
-cnn.Close();
+
 
 builder.Services.AddSingleton<ConnectionMultiplexer>(provider =>
 {
@@ -61,15 +80,33 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapHub<NotificationHub>("/notification");
+
 var recurringJobManager = app.Services.GetRequiredService<IRecurringJobManager>();
 
-var cronExpression = builder.Configuration["Intervals:IHeroesUpdate"];
+recurringJobManager.AddOrUpdate<IRedisUpdate>("tempHeroes", x => x.Run(null), cronExpression: builder.Configuration["Intervals:IHeroesUpdate"]);
 
 
-recurringJobManager.AddOrUpdate<IRedisUpdate>("tempHeroes",
-    x => x.Run(null), 
-    cronExpression);
+var notif = new NotificationRequest()
+{
+    ReturnUsers = new List<(string, string)>()
+    {       
+       (34.EncryptInt(), "Usuario")      
+    },
 
+};
+
+string a = 34.EncryptInt();
+string b = 34.EncryptInt();
+
+int c = a.DecryptInt();
+int d = b.DecryptInt();
+
+if (a == b)
+
+  //RecurringJob.AddOrUpdate(() => StringExtensions.test(), cronExpression: builder.Configuration["Intervals:IHeroNotification"]);
+
+recurringJobManager.AddOrUpdate<IRabbitClient>("rabbit", x => x.SendMessage(notif), cronExpression: builder.Configuration["Intervals:IHeroNotification"]);
 
 app.UseHangfireDashboard("/hangfire");
 app.UseHttpsRedirection();
