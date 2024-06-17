@@ -19,14 +19,14 @@ public class HeroDao : IHeroDao
     }
     public async Task<List<Hero>> ListHero()
     {
-        var hero = (await connection.QueryAsync<Hero>("listAllHeroes"),
-                   commandType: CommandType.StoredProcedure);
-        return (List<Hero>)hero.Item1.AsList();
-
+        var hero = await connection.QueryAsync<Hero>("SP_LS_ALL_HEROES", commandType: CommandType.StoredProcedure);
+        return hero.AsList();
     }
+
+
     public async Task<Hero> ListHeroById(int id)
     {
-        var hero = await connection.QueryFirstAsync<Hero>("ListHeroById",
+        var hero = await connection.QueryFirstAsync<Hero>("LIST_HERO_BY_ID",
         new
         {
             Id = id
@@ -35,38 +35,37 @@ public class HeroDao : IHeroDao
     }
 
     public async Task AddHero(Hero hero)
-    {
-        var connectionBd = "insertHero";
-        var newHero = new DynamicParameters();
-        newHero.Add("name", hero.Name);
-        newHero.Add("DisguiseName", hero.DisguiseName);        
-        newHero.Add("Place", hero.Place);
-        await connection.ExecuteAsync(connectionBd, newHero, commandType: CommandType.StoredProcedure);
+    {       
+            await connection.ExecuteAsync("INSERT_HERO", new
+            {
+                hero.Name,
+                hero.DisguiseName,
+                hero.Place
+
+            }, commandType: CommandType.StoredProcedure);
+        
 
     }
 
     public async Task UpdateHero(Hero hero)
     {
-        await connection.ExecuteAsync("updateHero", new
+        await connection.ExecuteAsync("UPDATE_HERO", new
         {
             hero.Id,
-            hero.Name,           
+            hero.Name,
             hero.DisguiseName,
             hero.Place
-
 
         }, commandType: CommandType.StoredProcedure);
     }
 
     public async Task DeleteHero(int id)
     {
-
-        await connection.ExecuteAsync("deleteHero", new
+        await connection.ExecuteAsync("DELETE_HERO", new
         {
             id
 
         }, commandType: CommandType.StoredProcedure);
     }
 }
-
 

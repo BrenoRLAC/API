@@ -7,6 +7,8 @@ using API.Middleware;
 using API.Service;
 using API.Utilities;
 using Hangfire;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 using StackExchange.Redis;
 
@@ -14,19 +16,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
+
 var allowedOrigins = builder.Configuration.GetSection("AllowedOrigins").Get<string[]>();
+
 
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(builder =>
+    options.AddPolicy("CorsPolicy", policyBuilder =>
     {
-        builder.WithOrigins(allowedOrigins)
-               .AllowAnyHeader()
-               .AllowAnyMethod()                        
-               .AllowCredentials();
+        policyBuilder.WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
-
 
 builder.Services.AddTransient<IHeroDao, HeroDao>();
 builder.Services.AddTransient<IHeroService, HeroService>();
@@ -107,6 +110,8 @@ if (a == b)
   //RecurringJob.AddOrUpdate(() => StringExtensions.test(), cronExpression: builder.Configuration["Intervals:IHeroNotification"]);
 
 recurringJobManager.AddOrUpdate<IRabbitClient>("rabbit", x => x.SendMessage(notif), cronExpression: builder.Configuration["Intervals:IHeroNotification"]);
+
+app.UseCors("CorsPolicy");
 
 app.UseHangfireDashboard("/hangfire");
 app.UseHttpsRedirection();
